@@ -31,7 +31,7 @@
     </script>
     <link rel="canonical" href="https://henningheine.com/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260828-night-3" />
 
     <meta property="og:title" content="Henning Heine" />
     <meta
@@ -64,7 +64,7 @@
           <span aria-hidden="true">|</span>
           <a href="https://x.com/HenningHeine">Twitter / X</a>
           <span aria-hidden="true">|</span>
-          <button class="theme-toggle" type="button">Night mode</button>
+          <a class="theme-toggle" href="#night-mode">Night mode</a>
         </nav>
       </header>
 
@@ -121,10 +121,10 @@
       const updateThemeToggle = () => {
         const isDark = document.documentElement.dataset.theme === 'dark';
         themeToggle.textContent = isDark ? 'Day mode' : 'Night mode';
-        themeToggle.setAttribute('aria-pressed', String(isDark));
       };
 
-      themeToggle.addEventListener('click', () => {
+      themeToggle.addEventListener('click', (event) => {
+        event.preventDefault();
         const isDark = document.documentElement.dataset.theme === 'dark';
         const nextTheme = isDark ? 'light' : 'dark';
         document.documentElement.dataset.theme = nextTheme;
