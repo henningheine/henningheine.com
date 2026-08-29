@@ -157,6 +157,10 @@ li {
   font-weight: 700;
 }
 
+.book-link {
+  color: inherit;
+}
+
 .book-author {
   color: var(--ink);
 }
