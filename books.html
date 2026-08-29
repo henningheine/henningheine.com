@@ -21,9 +21,17 @@
       content="noindex, nofollow, noarchive, nosnippet, noimageindex"
     />
     <meta name="referrer" content="no-referrer" />
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem('theme');
+        const hour = new Date().getHours();
+        const eveningTheme = hour >= 18 || hour < 6 ? 'dark' : 'light';
+        document.documentElement.dataset.theme = savedTheme || eveningTheme;
+      })();
+    </script>
     <link rel="canonical" href="https://henningheine.com/books.html" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/styles.css?v=20260828-night-3" />
 
     <meta property="og:title" content="Books — Henning Heine" />
     <meta
@@ -46,15 +54,13 @@
       <header class="site-header">
         <a class="site-title" href="/">Henning Heine</a>
         <nav class="social-links" aria-label="Primary navigation">
-          <a href="/">Home</a>
+          <a href="mailto:henning.heine@gmail.com">email</a>
           <span aria-hidden="true">|</span>
-          <a href="#books" aria-current="page">Books</a>
+          <a href="https://www.linkedin.com/in/henningheine">linkedin</a>
           <span aria-hidden="true">|</span>
-          <a href="mailto:henning.heine@gmail.com">Email</a>
+          <a href="https://x.com/HenningHeine">twitter</a>
           <span aria-hidden="true">|</span>
-          <a href="https://www.linkedin.com/in/henningheine">LinkedIn</a>
-          <span aria-hidden="true">|</span>
-          <a href="https://x.com/HenningHeine">Twitter / X</a>
+          <a class="theme-toggle" href="#night-mode">night</a>
         </nav>
       </header>
 
@@ -224,5 +230,24 @@
 
       <footer>Last updated August 28, 2026.</footer>
     </div>
+    <script>
+      const themeToggle = document.querySelector('.theme-toggle');
+
+      const updateThemeToggle = () => {
+        const isDark = document.documentElement.dataset.theme === 'dark';
+        themeToggle.textContent = isDark ? 'day' : 'night';
+      };
+
+      themeToggle.addEventListener('click', (event) => {
+        event.preventDefault();
+        const isDark = document.documentElement.dataset.theme === 'dark';
+        const nextTheme = isDark ? 'light' : 'dark';
+        document.documentElement.dataset.theme = nextTheme;
+        localStorage.setItem('theme', nextTheme);
+        updateThemeToggle();
+      });
+
+      updateThemeToggle();
+    </script>
   </body>
 </html>
