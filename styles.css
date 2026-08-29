@@ -100,9 +100,14 @@ li {
 }
 
 .investments span {
-  margin-left: 5px;
+  margin-left: 0;
   color: var(--muted);
   font-size: 14px;
+}
+
+.investments a {
+  display: inline-block;
+  width: 96px;
 }
 
 a {
@@ -157,10 +162,6 @@ footer {
     height: 172px;
   }
 
-  .investments span {
-    display: block;
-    margin: -1px 0 5px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
