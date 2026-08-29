@@ -47,7 +47,7 @@ body {
 
 .site-title {
   color: var(--ink);
-  font-size: clamp(30px, 6vw, 40px);
+  font-size: clamp(24px, 4.2vw, 30px);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.025em;
