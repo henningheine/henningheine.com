@@ -60,7 +60,7 @@
           <span aria-hidden="true">|</span>
           <a href="https://x.com/HenningHeine">twitter</a>
           <span aria-hidden="true">|</span>
-          <a class="theme-toggle" href="#night-mode">night mode</a>
+          <a class="theme-toggle" href="#night-mode">night</a>
         </nav>
       </header>
 
@@ -116,7 +116,7 @@
 
       const updateThemeToggle = () => {
         const isDark = document.documentElement.dataset.theme === 'dark';
-        themeToggle.textContent = isDark ? 'day mode' : 'night mode';
+        themeToggle.textContent = isDark ? 'day' : 'night';
       };
 
       themeToggle.addEventListener('click', (event) => {
