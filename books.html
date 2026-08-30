@@ -32,7 +32,7 @@
     </script>
     <link rel="canonical" href="https://henningheine.com/books.html" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css?v=20260830-book-panel-4" />
+    <link rel="stylesheet" href="/styles.css?v=20260830-book-panel-5" />
 
     <meta property="og:title" content="My reading list over the years — Henning Heine" />
     <meta
@@ -478,13 +478,16 @@
 
       const yearToc = document.querySelector('.year-toc');
       const yearSections = [...document.querySelectorAll('#books > section')];
+      const yearTocList = document.createElement('div');
+      yearTocList.className = 'year-toc-list';
+      yearToc.append(yearTocList);
       const yearLinks = yearSections.map((section) => {
         const heading = section.querySelector('h2');
         const link = document.createElement('a');
         link.href = `#${heading.id}`;
         link.textContent = heading.textContent;
         link.dataset.year = heading.textContent;
-        yearToc.append(link);
+        yearTocList.append(link);
         return link;
       });
 
@@ -498,9 +501,19 @@
           if (section.getBoundingClientRect().top <= marker) activeSection = section;
         });
 
+        const activeIndex = yearSections.indexOf(activeSection);
+        yearTocList.style.transform = `translateY(${(3 - activeIndex) * 19}px)`;
+
         yearLinks.forEach((link, index) => {
-          const isActive = yearSections[index] === activeSection;
+          const distance = Math.abs(index - activeIndex);
+          const isVisible = distance <= 3;
+          const isActive = index === activeIndex;
+          const opacity = [1, 0.78, 0.52, 0.28][distance] || 0;
+
+          link.classList.toggle('is-visible', isVisible);
           link.classList.toggle('is-active', isActive);
+          link.style.setProperty('--toc-opacity', opacity);
+          link.tabIndex = isVisible ? 0 : -1;
           if (isActive) link.setAttribute('aria-current', 'true');
           else link.removeAttribute('aria-current');
         });
