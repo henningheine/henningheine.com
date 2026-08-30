@@ -352,7 +352,8 @@ li {
   font-size: 12px;
 }
 
-.year-toc {
+.year-toc,
+.theme-toc {
   position: fixed;
   z-index: 5;
   top: 50%;
@@ -363,13 +364,19 @@ li {
   transform: translateY(-50%);
 }
 
-.year-toc-list {
+.theme-toc {
+  width: 150px;
+}
+
+.year-toc-list,
+.theme-toc-list {
   display: flex;
   flex-direction: column;
   transition: transform 220ms ease;
 }
 
-.year-toc::before {
+.year-toc::before,
+.theme-toc::before {
   position: absolute;
   top: 0;
   right: 0;
@@ -379,7 +386,8 @@ li {
   content: '';
 }
 
-.year-toc a {
+.year-toc a,
+.theme-toc a {
   position: relative;
   flex: 0 0 19px;
   height: 19px;
@@ -391,14 +399,17 @@ li {
   pointer-events: none;
   text-align: right;
   transition: color 140ms ease, opacity 180ms ease;
+  white-space: nowrap;
 }
 
-.year-toc a.is-visible {
+.year-toc a.is-visible,
+.theme-toc a.is-visible {
   opacity: var(--toc-opacity, 1);
   pointer-events: auto;
 }
 
-.year-toc a::after {
+.year-toc a::after,
+.theme-toc a::after {
   position: absolute;
   top: 50%;
   right: -3px;
@@ -413,23 +424,29 @@ li {
 
 .year-toc a:hover,
 .year-toc a:focus-visible,
-.year-toc a.is-active {
+.year-toc a.is-active,
+.theme-toc a:hover,
+.theme-toc a:focus-visible,
+.theme-toc a.is-active {
   color: var(--ink);
   text-decoration: none;
 }
 
-.year-toc a.is-active {
+.year-toc a.is-active,
+.theme-toc a.is-active {
   font-weight: 700;
   opacity: 1;
 }
 
-.year-toc a.is-active::after {
+.year-toc a.is-active::after,
+.theme-toc a.is-active::after {
   border-color: var(--ink);
   background: var(--ink);
 }
 
 @media (max-width: 900px) {
-  .year-toc {
+  .year-toc,
+  .theme-toc {
     display: none;
   }
 }
@@ -503,7 +520,9 @@ footer {
   }
 
   .year-toc-list,
-  .year-toc a {
+  .year-toc a,
+  .theme-toc-list,
+  .theme-toc a {
     transition: none;
   }
 }

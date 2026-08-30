@@ -19,7 +19,7 @@
     </script>
     <link rel="canonical" href="https://henningheine.com/quotes.html" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css?v=20260830-quotes-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260830-quotes-2" />
     <meta property="og:title" content="Quotes worth keeping — Henning Heine" />
     <meta property="og:description" content="A personal collection of quotes and passages worth returning to." />
     <meta property="og:type" content="website" />
@@ -209,6 +209,9 @@
       </main>
       <footer>Last updated August 30, 2026.</footer>
     </div>
+
+    <nav class="theme-toc" aria-label="Quote themes"></nav>
+
     <script>
       const themeToggle = document.querySelector('.theme-toggle');
       const updateThemeToggle = () => {
@@ -224,6 +227,60 @@
         updateThemeToggle();
       });
       updateThemeToggle();
+
+      const themeToc = document.querySelector('.theme-toc');
+      const themeSections = [...document.querySelectorAll('#quotes > section')];
+      const themeTocList = document.createElement('div');
+      themeTocList.className = 'theme-toc-list';
+      themeToc.append(themeTocList);
+      const themeLinks = themeSections.map((section) => {
+        const heading = section.querySelector('h2');
+        const link = document.createElement('a');
+        link.href = '#' + heading.id;
+        link.textContent = heading.textContent;
+        themeTocList.append(link);
+        return link;
+      });
+
+      let themeTocFrame = 0;
+      const updateActiveTheme = () => {
+        themeTocFrame = 0;
+        const marker = window.innerHeight * 0.32;
+        let activeSection = themeSections[0];
+
+        themeSections.forEach((section) => {
+          if (section.getBoundingClientRect().top <= marker) activeSection = section;
+        });
+
+        const isAtPageBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+        if (isAtPageBottom) activeSection = themeSections[themeSections.length - 1];
+
+        const activeIndex = themeSections.indexOf(activeSection);
+        themeTocList.style.transform = 'translateY(' + ((3 - activeIndex) * 19) + 'px)';
+
+        themeLinks.forEach((link, index) => {
+          const distance = Math.abs(index - activeIndex);
+          const isVisible = distance <= 3;
+          const isActive = index === activeIndex;
+          const opacity = [1, 0.78, 0.52, 0.28][distance] || 0;
+
+          link.classList.toggle('is-visible', isVisible);
+          link.classList.toggle('is-active', isActive);
+          link.style.setProperty('--toc-opacity', opacity);
+          link.tabIndex = isVisible ? 0 : -1;
+          if (isActive) link.setAttribute('aria-current', 'true');
+          else link.removeAttribute('aria-current');
+        });
+      };
+
+      const queueThemeTocUpdate = () => {
+        if (!themeTocFrame) themeTocFrame = window.requestAnimationFrame(updateActiveTheme);
+      };
+
+      window.addEventListener('scroll', queueThemeTocUpdate, { passive: true });
+      window.addEventListener('resize', queueThemeTocUpdate);
+      themeLinks.forEach((link) => link.addEventListener('click', queueThemeTocUpdate));
+      updateActiveTheme();
     </script>
   </body>
 </html>
