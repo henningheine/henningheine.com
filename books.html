@@ -31,7 +31,7 @@
     </script>
     <link rel="canonical" href="https://henningheine.com/books.html" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css?v=20260828-night-3" />
+    <link rel="stylesheet" href="/styles.css?v=20260830-book-panel-1" />
 
     <meta property="og:title" content="My reading list over the years — Henning Heine" />
     <meta
@@ -228,7 +228,7 @@
         <section aria-labelledby="books-2009">
           <h2 id="books-2009">2009</h2>
           <ol class="book-list" start="74">
-            <li><cite><a class="book-link" href="https://en.wikipedia.org/wiki/The_Gulag_Archipelago">Der Archipel GULAG (1973)</a></cite><span class="book-author"> — Aleksandr Solzhenitsyn</span><span class="book-date">Oct 5</span></li>
+            <li><cite><a class="book-link" href="https://en.wikipedia.org/wiki/The_Gulag_Archipelago">The Gulag Archipelago (1973)</a></cite><span class="book-author"> — Aleksandr Solzhenitsyn</span><span class="book-date">Oct 5</span></li>
             <li><cite><a class="book-link" href="https://en.wikipedia.org/wiki/Guns,_Germs,_and_Steel">Guns, Germs and Steel (1997)</a></cite><span class="book-author"> — Jared Diamond</span><span class="book-date">Mar 2</span></li>
             <li><cite><a class="book-link" href="https://en.wikipedia.org/wiki/The_Clash_of_Civilizations">The Clash of Civilizations and the Remaking of World Order (1996)</a></cite><span class="book-author"> — Samuel P. Huntington</span><span class="book-date">Jan 7</span></li>
           </ol>
@@ -243,7 +243,22 @@
         </section>
       </main>
 
-      <footer>Last updated August 28, 2026.</footer>
+      <aside class="book-panel" role="dialog" aria-labelledby="book-panel-title" hidden>
+        <button class="book-panel-close" type="button" aria-label="Close book details">×</button>
+        <div class="book-panel-cover-wrap">
+          <img class="book-panel-cover" alt="" hidden />
+          <span class="book-panel-cover-fallback">Cover unavailable</span>
+        </div>
+        <div class="book-panel-copy">
+          <h2 id="book-panel-title"></h2>
+          <p class="book-panel-meta"></p>
+          <p class="book-panel-summary" aria-live="polite"></p>
+          <a class="book-panel-amazon" href="#" target="_blank" rel="noopener noreferrer">View on Amazon</a>
+          <a class="book-panel-source" href="#" target="_blank" rel="noopener noreferrer" hidden></a>
+        </div>
+      </aside>
+
+      <footer>Last updated August 30, 2026.</footer>
     </div>
     <script>
       const themeToggle = document.querySelector('.theme-toggle');
@@ -263,6 +278,197 @@
       });
 
       updateThemeToggle();
+
+      const bookPanel = document.querySelector('.book-panel');
+      const bookPanelClose = document.querySelector('.book-panel-close');
+      const bookPanelTitle = document.querySelector('#book-panel-title');
+      const bookPanelMeta = document.querySelector('.book-panel-meta');
+      const bookPanelSummary = document.querySelector('.book-panel-summary');
+      const bookPanelCover = document.querySelector('.book-panel-cover');
+      const bookPanelCoverFallback = document.querySelector('.book-panel-cover-fallback');
+      const bookPanelAmazon = document.querySelector('.book-panel-amazon');
+      const bookPanelSource = document.querySelector('.book-panel-source');
+      const bookCache = new Map();
+      let activeRequest = 0;
+
+      const cleanText = (value = '') => {
+        const holder = document.createElement('div');
+        holder.innerHTML = value;
+        return holder.textContent.replace(/\s+/g, ' ').trim();
+      };
+
+      const oneSentence = (value) => {
+        const text = cleanText(value);
+        if (!text) return '';
+        const sentence = text.match(/^.{35,260}?[.!?](?=\s|$)/)?.[0];
+        if (sentence) return sentence;
+        return text.length > 220 ? `${text.slice(0, 217).trimEnd()}…` : text;
+      };
+
+      const fetchWithTimeout = async (url, timeout = 7000) => {
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => controller.abort(), timeout);
+        try {
+          return await fetch(url, { signal: controller.signal });
+        } finally {
+          window.clearTimeout(timer);
+        }
+      };
+
+      const getBookDetails = (cite) => {
+        const label = cite.textContent.trim();
+        const yearMatch = label.match(/\s+\((\d{4})\)$/);
+        const title = yearMatch ? label.slice(0, yearMatch.index) : label;
+        const year = yearMatch?.[1] || '';
+        const author = cite.parentElement.querySelector('.book-author')?.textContent
+          .replace(/^\s*—\s*/, '')
+          .trim() || '';
+        const wikipediaUrl = cite.querySelector('a[href*="wikipedia.org/wiki/"]')?.href || '';
+        return { title, year, author, wikipediaUrl };
+      };
+
+      const loadWikipedia = async (url) => {
+        if (!url) return {};
+        const slug = new URL(url).pathname.split('/wiki/')[1];
+        if (!slug) return {};
+        const response = await fetchWithTimeout(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`);
+        if (!response.ok) return {};
+        const data = await response.json();
+        return {
+          summary: oneSentence(data.extract),
+          cover: data.thumbnail?.source || '',
+          sourceUrl: data.content_urls?.desktop?.page || url,
+          sourceLabel: 'More on Wikipedia',
+        };
+      };
+
+      const loadOpenLibrary = async ({ title, author }) => {
+        const parameters = new URLSearchParams({
+          title,
+          author,
+          fields: 'key,title,author_name,cover_i',
+          limit: '1',
+        });
+        const response = await fetchWithTimeout(`https://openlibrary.org/search.json?${parameters}`);
+        if (!response.ok) return {};
+        const result = (await response.json()).docs?.[0];
+        if (!result) return {};
+
+        let summary = '';
+        if (result.key) {
+          const workResponse = await fetchWithTimeout(`https://openlibrary.org${result.key}.json`);
+          if (workResponse.ok) {
+            const work = await workResponse.json();
+            const description = typeof work.description === 'string'
+              ? work.description
+              : work.description?.value;
+            summary = oneSentence(description);
+          }
+        }
+
+        return {
+          summary,
+          cover: result.cover_i
+            ? `https://covers.openlibrary.org/b/id/${result.cover_i}-M.jpg`
+            : '',
+          sourceUrl: result.key ? `https://openlibrary.org${result.key}` : '',
+          sourceLabel: 'More on Open Library',
+        };
+      };
+
+      const loadBookData = async (book) => {
+        const key = `${book.title}|${book.author}`;
+        if (bookCache.has(key)) return bookCache.get(key);
+
+        let wikipedia = {};
+        try {
+          wikipedia = await loadWikipedia(book.wikipediaUrl);
+        } catch {}
+
+        let library = {};
+        if (!wikipedia.summary || !wikipedia.cover) {
+          try {
+            library = await loadOpenLibrary(book);
+          } catch {}
+        }
+
+        const result = {
+          summary: wikipedia.summary || library.summary || 'A concise summary is not available for this title.',
+          cover: wikipedia.cover || library.cover || '',
+          sourceUrl: wikipedia.sourceUrl || library.sourceUrl || '',
+          sourceLabel: wikipedia.sourceLabel || library.sourceLabel || '',
+        };
+        bookCache.set(key, result);
+        return result;
+      };
+
+      const showBook = async (cite) => {
+        const request = ++activeRequest;
+        const book = getBookDetails(cite);
+        const amazonQuery = encodeURIComponent(`${book.title} ${book.author}`);
+
+        bookPanel.hidden = false;
+        document.body.classList.add('book-panel-open');
+        bookPanelTitle.textContent = book.title;
+        bookPanelMeta.textContent = [book.author, book.year && `Published ${book.year}`]
+          .filter(Boolean)
+          .join(' · ');
+        bookPanelSummary.textContent = 'Loading summary…';
+        bookPanelAmazon.href = `https://www.amazon.com/s?k=${amazonQuery}&i=stripbooks`;
+        bookPanelCover.hidden = true;
+        bookPanelCover.removeAttribute('src');
+        bookPanelCoverFallback.hidden = false;
+        bookPanelSource.hidden = true;
+
+        const data = await loadBookData(book);
+        if (request !== activeRequest) return;
+
+        bookPanelSummary.textContent = data.summary;
+        if (data.cover) {
+          bookPanelCover.src = data.cover.replace('http://', 'https://');
+          bookPanelCover.alt = `Cover of ${book.title}`;
+        }
+        if (data.sourceUrl) {
+          bookPanelSource.href = data.sourceUrl;
+          bookPanelSource.textContent = data.sourceLabel;
+          bookPanelSource.hidden = false;
+        }
+      };
+
+      const hideBook = () => {
+        activeRequest += 1;
+        bookPanel.hidden = true;
+        document.body.classList.remove('book-panel-open');
+      };
+
+      document.querySelectorAll('.book-list cite').forEach((cite) => {
+        cite.tabIndex = 0;
+        cite.setAttribute('role', 'button');
+        cite.setAttribute('aria-haspopup', 'dialog');
+        cite.addEventListener('click', (event) => {
+          event.preventDefault();
+          showBook(cite);
+        });
+        cite.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            showBook(cite);
+          }
+        });
+      });
+
+      bookPanelClose.addEventListener('click', hideBook);
+      bookPanelCover.addEventListener('load', () => {
+        bookPanelCover.hidden = false;
+        bookPanelCoverFallback.hidden = true;
+      });
+      bookPanelCover.addEventListener('error', () => {
+        bookPanelCover.hidden = true;
+        bookPanelCoverFallback.hidden = false;
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !bookPanel.hidden) hideBook();
+      });
     </script>
   </body>
 </html>
