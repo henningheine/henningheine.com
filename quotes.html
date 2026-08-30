@@ -19,7 +19,7 @@
     </script>
     <link rel="canonical" href="https://henningheine.com/quotes.html" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css?v=20260830-quotes-2" />
+    <link rel="stylesheet" href="/styles.css?v=20260830-quotes-3" />
     <meta property="og:title" content="Quotes worth keeping — Henning Heine" />
     <meta property="og:description" content="A personal collection of quotes and passages worth returning to." />
     <meta property="og:type" content="website" />
@@ -249,10 +249,39 @@
         if (!themeTocFrame) themeTocFrame = window.requestAnimationFrame(updateActiveTheme);
       };
 
+      const quotes = [...document.querySelectorAll('.quote')];
+      let quoteFocusFrame = 0;
+      const updateFocusedQuote = () => {
+        quoteFocusFrame = 0;
+        const viewportCenter = window.innerHeight / 2;
+        let focusedQuote = quotes[0];
+        let closestDistance = Infinity;
+
+        quotes.forEach((quote) => {
+          const bounds = quote.getBoundingClientRect();
+          const quoteCenter = bounds.top + bounds.height / 2;
+          const distance = Math.abs(quoteCenter - viewportCenter);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            focusedQuote = quote;
+          }
+        });
+
+        quotes.forEach((quote) => quote.classList.toggle('is-focused', quote === focusedQuote));
+        document.documentElement.classList.add('quote-focus-ready');
+      };
+
+      const queueQuoteFocusUpdate = () => {
+        if (!quoteFocusFrame) quoteFocusFrame = window.requestAnimationFrame(updateFocusedQuote);
+      };
+
       window.addEventListener('scroll', queueThemeTocUpdate, { passive: true });
       window.addEventListener('resize', queueThemeTocUpdate);
+      window.addEventListener('scroll', queueQuoteFocusUpdate, { passive: true });
+      window.addEventListener('resize', queueQuoteFocusUpdate);
       themeLinks.forEach((link) => link.addEventListener('click', queueThemeTocUpdate));
       updateActiveTheme();
+      updateFocusedQuote();
     </script>
   </body>
 </html>

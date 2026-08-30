@@ -7,6 +7,7 @@
   --glow: rgba(255, 255, 255, 0.9);
   --shadow: rgba(42, 48, 45, 0.06);
   --portrait-shadow: rgba(42, 48, 45, 0.1);
+  --reading-fade: #fff;
 }
 
 html[data-theme='dark'] {
@@ -19,6 +20,7 @@ html[data-theme='dark'] {
   --glow: rgba(68, 70, 67, 0.28);
   --shadow: rgba(0, 0, 0, 0.2);
   --portrait-shadow: rgba(0, 0, 0, 0.26);
+  --reading-fade: #242625;
 }
 
 * {
@@ -156,6 +158,35 @@ li {
   padding-top: 18px;
 }
 
+.quotes-page::before,
+.quotes-page::after {
+  position: fixed;
+  z-index: 4;
+  left: 50%;
+  width: min(680px, calc(100% - 40px));
+  height: min(18vh, 150px);
+  pointer-events: none;
+  content: '';
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 300ms ease;
+}
+
+.quotes-page::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--reading-fade) 20%, transparent 100%);
+}
+
+.quotes-page::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--reading-fade) 20%, transparent 100%);
+}
+
+.quote-focus-ready .quotes-page::before,
+.quote-focus-ready .quotes-page::after {
+  opacity: 1;
+}
+
 .quotes-intro {
   margin-bottom: 28px;
   color: var(--muted);
@@ -169,6 +200,20 @@ li {
   margin: 0;
   padding: 20px 0 19px;
   border-bottom: 1px solid color-mix(in srgb, var(--ink) 11%, transparent);
+}
+
+.quote-focus-ready .quotes-page .quote {
+  opacity: 0.2;
+  filter: blur(0.35px);
+  transform: scale(0.985);
+  transform-origin: center;
+  transition: opacity 300ms ease, filter 300ms ease, transform 300ms ease;
+}
+
+.quote-focus-ready .quotes-page .quote.is-focused {
+  opacity: 1;
+  filter: none;
+  transform: none;
 }
 
 .quote blockquote,
@@ -486,6 +531,12 @@ footer {
     padding: 24px 22px 20px;
   }
 
+  .quotes-page::before,
+  .quotes-page::after {
+    width: calc(100% - 24px);
+    height: min(15vh, 110px);
+  }
+
   .site-header {
     gap: 12px;
     padding-bottom: 22px;
@@ -522,7 +573,10 @@ footer {
   .year-toc-list,
   .year-toc a,
   .theme-toc-list,
-  .theme-toc a {
+  .theme-toc a,
+  .quotes-page::before,
+  .quotes-page::after,
+  .quote-focus-ready .quotes-page .quote {
     transition: none;
   }
 }
