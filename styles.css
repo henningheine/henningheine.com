@@ -133,7 +133,8 @@ li {
   padding-top: 18px;
 }
 
-.books-page section h2 {
+.books-page section h2,
+.quotes-page section h2 {
   margin: 30px 0 5px;
   color: var(--muted);
   font-size: 15px;
@@ -149,6 +150,71 @@ li {
 
 .books-intro {
   color: var(--muted);
+}
+
+.quotes-page main {
+  padding-top: 18px;
+}
+
+.quotes-intro {
+  margin-bottom: 28px;
+  color: var(--muted);
+}
+
+.quote-list {
+  border-top: 1px solid color-mix(in srgb, var(--ink) 11%, transparent);
+}
+
+.quote {
+  margin: 0;
+  padding: 20px 0 19px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 11%, transparent);
+}
+
+.quote blockquote,
+.quote blockquote p {
+  margin: 0;
+}
+
+.quote blockquote {
+  max-width: 590px;
+  font-size: 18px;
+  line-height: 1.58;
+  hanging-punctuation: first last;
+}
+
+.quote blockquote p + p {
+  margin-top: 12px;
+}
+
+.quote figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.quote figcaption::before {
+  content: '— ';
+}
+
+.quote .translation {
+  color: var(--muted);
+  font-size: 15px;
+  font-style: italic;
+}
+
+.quote-dialogue blockquote,
+.quote-long blockquote {
+  font-size: 17px;
+}
+
+.quote-verse blockquote {
+  line-height: 1.72;
+}
+
+.social-links a[aria-current='page'] {
+  color: var(--ink);
 }
 
 .book-list {
@@ -206,8 +272,9 @@ li {
   padding: 18px;
   overflow-y: auto;
   border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
-  background: var(--paper);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
   box-shadow: 0 18px 55px rgba(20, 24, 22, 0.22);
+  -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
 }
 
@@ -423,6 +490,9 @@ footer {
     left: 12px;
     width: auto;
     max-height: min(72vh, 560px);
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(112%);
+    backdrop-filter: blur(18px) saturate(112%);
   }
 
 }
