@@ -14,6 +14,7 @@ window.BOOK_SUMMARIES = Object.freeze({
   'The Fund (2023)': 'Rob Copeland examines Ray Dalio, Bridgewater Associates, and the gap between the hedge fund’s public principles and its internal culture.',
   'The Room Where It Happened (2020)': 'John Bolton recounts his time as national security adviser and offers an insider’s view of foreign-policy decision-making in the Trump White House.',
   'Elon Musk (2023)': 'Walter Isaacson portrays Elon Musk’s life, companies, risk tolerance, and often volatile approach to innovation and leadership.',
+  'One Damn Thing After Another: Memoirs of an Attorney General (2022)': 'William Barr recounts his two tenures as U.S. attorney general and offers his perspective on major legal and political controversies under George H. W. Bush and Donald Trump.',
   'The Spy and the Traitor (2018)': 'Ben Macintyre tells the true story of Oleg Gordievsky, the KGB officer whose work for Britain altered the course of the Cold War.',
   'Measure What Matters (2018)': 'John Doerr explains how objectives and key results can help organizations focus, align teams, and measure meaningful progress.',
   'Softwar (2003)': 'Matthew Symonds profiles Larry Ellison and Oracle while examining the ambition, competition, and strategy behind the company’s rise.',
