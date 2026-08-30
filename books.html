@@ -494,15 +494,15 @@
       let tocFrame = 0;
       const updateActiveYear = () => {
         tocFrame = 0;
-        const marker = window.innerHeight * 0.32;
+        const pageBottom = window.scrollY + window.innerHeight;
+        const distanceToBottom = Math.max(0, document.documentElement.scrollHeight - pageBottom);
+        const markerTravel = Math.max(0, window.innerHeight * 0.68 - distanceToBottom);
+        const marker = Math.min(window.innerHeight - 1, window.innerHeight * 0.32 + markerTravel);
         let activeSection = yearSections[0];
 
         yearSections.forEach((section) => {
           if (section.getBoundingClientRect().top <= marker) activeSection = section;
         });
-
-        const isAtPageBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
-        if (isAtPageBottom) activeSection = yearSections[yearSections.length - 1];
 
         const activeIndex = yearSections.indexOf(activeSection);
         yearTocList.style.transform = `translateY(${(3 - activeIndex) * 19}px)`;
