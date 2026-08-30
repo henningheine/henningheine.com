@@ -21,6 +21,7 @@
       content="noindex, nofollow, noarchive, nosnippet, noimageindex"
     />
     <meta name="referrer" content="no-referrer" />
+    <script src="/book-summaries.js?v=20260830-1"></script>
     <script>
       (() => {
         const savedTheme = localStorage.getItem('theme');
@@ -343,7 +344,7 @@
         };
       };
 
-      const loadOpenLibrary = async ({ title, author }) => {
+      const loadOpenLibrary = async ({ title, author }, includeSummary = true) => {
         const parameters = new URLSearchParams({
           title,
           author,
@@ -356,7 +357,7 @@
         if (!result) return {};
 
         let summary = '';
-        if (result.key) {
+        if (includeSummary && result.key) {
           const workResponse = await fetchWithTimeout(`https://openlibrary.org${result.key}.json`);
           if (workResponse.ok) {
             const work = await workResponse.json();
@@ -380,6 +381,7 @@
       const loadBookData = async (book) => {
         const key = `${book.title}|${book.author}`;
         if (bookCache.has(key)) return bookCache.get(key);
+        const localSummary = window.BOOK_SUMMARIES?.[`${book.title} (${book.year})`] || '';
 
         let wikipedia = {};
         try {
@@ -389,12 +391,12 @@
         let library = {};
         if (!wikipedia.summary || !wikipedia.cover) {
           try {
-            library = await loadOpenLibrary(book);
+            library = await loadOpenLibrary(book, !localSummary && !wikipedia.summary);
           } catch {}
         }
 
         const result = {
-          summary: wikipedia.summary || library.summary || 'A concise summary is not available for this title.',
+          summary: localSummary || wikipedia.summary || library.summary,
           cover: wikipedia.cover || library.cover || '',
           sourceUrl: wikipedia.sourceUrl || library.sourceUrl || '',
           sourceLabel: wikipedia.sourceLabel || library.sourceLabel || '',
@@ -414,7 +416,8 @@
         bookPanelMeta.textContent = [book.author, book.year && `Published ${book.year}`]
           .filter(Boolean)
           .join(' · ');
-        bookPanelSummary.textContent = 'Loading summary…';
+        bookPanelSummary.textContent = window.BOOK_SUMMARIES?.[`${book.title} (${book.year})`]
+          || 'Loading summary…';
         bookPanelAmazon.href = `https://www.amazon.com/s?k=${amazonQuery}&i=stripbooks`;
         bookPanelCover.hidden = true;
         bookPanelCover.removeAttribute('src');
