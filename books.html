@@ -505,6 +505,9 @@
           if (section.getBoundingClientRect().top <= marker) activeSection = section;
         });
 
+        const isAtPageBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+        if (isAtPageBottom) activeSection = yearSections[yearSections.length - 1];
+
         const activeIndex = yearSections.indexOf(activeSection);
         yearTocList.style.transform = `translateY(${(3 - activeIndex) * 19}px)`;
 
