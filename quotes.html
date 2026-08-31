@@ -254,13 +254,22 @@
       const updateFocusedQuote = () => {
         quoteFocusFrame = 0;
         const viewportCenter = window.innerHeight / 2;
+        const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+        const scrollProgress = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+        const firstBounds = quotes[0].getBoundingClientRect();
+        const lastBounds = quotes[quotes.length - 1].getBoundingClientRect();
+        const firstDocumentCenter = firstBounds.top + window.scrollY + firstBounds.height / 2;
+        const lastDocumentCenter = lastBounds.top + window.scrollY + lastBounds.height / 2;
+        const topReadingLine = Math.min(viewportCenter, firstDocumentCenter);
+        const bottomReadingLine = Math.max(viewportCenter, lastDocumentCenter - maxScroll);
+        const readingLine = topReadingLine + (bottomReadingLine - topReadingLine) * scrollProgress;
         let focusedQuote = quotes[0];
         let closestDistance = Infinity;
 
         quotes.forEach((quote) => {
           const bounds = quote.getBoundingClientRect();
           const quoteCenter = bounds.top + bounds.height / 2;
-          const distance = Math.abs(quoteCenter - viewportCenter);
+          const distance = Math.abs(quoteCenter - readingLine);
           if (distance < closestDistance) {
             closestDistance = distance;
             focusedQuote = quote;
