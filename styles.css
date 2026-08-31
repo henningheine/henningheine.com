@@ -156,6 +156,7 @@ li {
 
 .quotes-page main {
   padding-top: 18px;
+  padding-bottom: min(20vh, 190px);
 }
 
 .quotes-page::before,
