@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Places I’ve been — Henning Heine</title>
+    <meta name="description" content="An interactive map of countries and regions visited by Henning Heine." />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, nocache" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <meta name="referrer" content="no-referrer" />
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem('theme');
+        const hour = new Date().getHours();
+        document.documentElement.dataset.theme = savedTheme || (hour >= 18 || hour < 6 ? 'dark' : 'light');
+      })();
+    </script>
+    <link rel="canonical" href="https://henningheine.com/travel.html" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css?v=20260901-travel-1" />
+    <meta property="og:title" content="Places I’ve been — Henning Heine" />
+    <meta property="og:description" content="An interactive map of countries and regions I’ve visited." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://henningheine.com/travel.html" />
+    <meta property="og:image" content="https://henningheine.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Places I’ve been — Henning Heine" />
+    <meta name="twitter:description" content="An interactive map of countries and regions I’ve visited." />
+    <meta name="twitter:image" content="https://henningheine.com/og.png" />
+  </head>
+  <body>
+    <div class="page-shell travel-page">
+      <header class="site-header">
+        <a class="site-title" href="/">Henning Heine</a>
+        <nav class="social-links" aria-label="Primary navigation">
+          <a href="mailto:henning.heine@gmail.com">email</a><span aria-hidden="true">|</span>
+          <a href="https://www.linkedin.com/in/henningheine">linkedin</a><span aria-hidden="true">|</span>
+          <a href="https://x.com/HenningHeine">twitter</a><span aria-hidden="true">|</span>
+          <a class="theme-toggle" href="#night-mode">night</a>
+        </nav>
+      </header>
+
+      <main id="travel">
+        <div class="travel-heading-row">
+          <div>
+            <h1 class="page-heading">Places I’ve been</h1>
+            <p class="travel-intro"><span id="country-count">37</span> countries and regions, pieced together from travel records.</p>
+          </div>
+          <div class="travel-stat" aria-label="Five continents visited">
+            <strong>5</strong>
+            <span>continents</span>
+          </div>
+        </div>
+
+        <div class="travel-controls" aria-label="Map filters">
+          <div class="travel-filters" role="group" aria-label="Filter by region">
+            <button class="travel-filter is-active" type="button" data-region="All">all</button>
+            <button class="travel-filter" type="button" data-region="Europe">europe</button>
+            <button class="travel-filter" type="button" data-region="Asia">asia</button>
+            <button class="travel-filter" type="button" data-region="Americas">americas</button>
+            <button class="travel-filter" type="button" data-region="Africa">africa</button>
+            <button class="travel-filter" type="button" data-region="Oceania">oceania</button>
+          </div>
+          <label class="travel-search">
+            <span class="sr-only">Find a country</span>
+            <input id="country-search" type="search" placeholder="find a country" autocomplete="off" />
+          </label>
+        </div>
+
+        <section class="travel-map-wrap" aria-label="Interactive world map">
+          <div id="travel-map" class="travel-map" role="img" aria-label="World map highlighting countries and regions Henning has visited">
+            <p class="travel-map-loading">Drawing the map…</p>
+          </div>
+          <div class="travel-map-key" aria-hidden="true"><i></i> visited</div>
+          <div id="map-tooltip" class="map-tooltip" hidden></div>
+        </section>
+
+        <div class="travel-content">
+          <section aria-labelledby="country-list-heading">
+            <div class="travel-section-heading">
+              <h2 id="country-list-heading">Countries and regions</h2>
+              <span id="visible-count">37 shown</span>
+            </div>
+            <div id="country-list" class="country-list"></div>
+            <p id="country-empty" class="country-empty" hidden>No matching country found.</p>
+          </section>
+
+          <aside id="country-detail" class="country-detail" aria-live="polite">
+            <button class="country-detail-close" type="button" aria-label="Close country details">×</button>
+            <p class="country-detail-kicker">Select a country</p>
+            <h2>Travel notes</h2>
+            <p>Click a highlighted country or a name in the list to see the record behind it.</p>
+          </aside>
+        </div>
+
+        <p class="travel-note">Based on OneDrive and Google Photos albums, personal travel logs, Gmail, Google Calendar and Google Maps Timeline summaries through August 2026. Airport connections are included where the itinerary documents the stop.</p>
+      </main>
+      <footer>Last updated September 1, 2026.</footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script>
+      const countries = [
+        { id: 840, name: 'United States', region: 'Americas', first: 1990, places: 'New York, San Francisco, Los Angeles, Hawaii and beyond', evidence: 'Dated photo albums, flights, stays and Google Timeline' },
+        { id: 276, name: 'Germany', region: 'Europe', first: 1990, places: 'Frankfurt, Bremen, Munich and Berlin', evidence: 'Dated photo albums, flights, rail bookings and Google Timeline' },
+        { id: 156, name: 'China', region: 'Asia', first: 1991, places: 'Beijing, Chengde, Hangzhou, Qingdao, Yunnan and southern China', evidence: 'Dated family and school albums, flights and Google Timeline' },
+        { id: 344, name: 'Hong Kong', region: 'Asia', first: 1992, places: 'Hong Kong', evidence: 'Dated photo albums, boarding passes, stays and Google Timeline', coords: [114.17, 22.32] },
+        { id: 764, name: 'Thailand', region: 'Asia', first: 1999, places: 'Bangkok, Hua Hin, Koh Samui and Phuket', evidence: 'Dated family albums, hotel folio, flights and Google Timeline' },
+        { id: 724, name: 'Spain', region: 'Europe', first: 2010, places: 'Madrid, Seville, Granada and Barcelona', evidence: 'Personal itineraries, flights and Google Timeline' },
+        { id: 422, name: 'Lebanon', region: 'Asia', first: 2018, places: 'Beirut', evidence: 'Completed Airbnb stay and Google Timeline' },
+        { id: 44, name: 'The Bahamas', region: 'Americas', first: 2020, places: 'Exuma', evidence: 'Google Timeline trip highlight' },
+        { id: 188, name: 'Costa Rica', region: 'Americas', first: 2021, places: 'Santa Teresa, Puntarenas and San José', evidence: 'Completed stays, receipts and Google Timeline' },
+        { id: 591, name: 'Panama', region: 'Americas', first: 2016, places: 'Panama City, El Higo and Las Lajas', evidence: 'Completed stays, Google Photos and Google Timeline' },
+        { id: 484, name: 'Mexico', region: 'Americas', first: 2017, places: 'Mexico City and Los Cabos', evidence: 'Flight check-in and Google Timeline' },
+        { id: 826, name: 'United Kingdom', region: 'Europe', first: 2011, places: 'London and southern England', evidence: 'Residence, rail bookings, flights and Google Timeline' },
+        { id: 250, name: 'France', region: 'Europe', first: 1994, places: 'Paris, Disneyland, Nice, Grasse, Cannes, Èze and the Côte d’Azur', evidence: 'Dated albums, completed stays, rentals and Google Timeline' },
+        { id: 756, name: 'Switzerland', region: 'Europe', first: 2022, places: 'Courgenay and the Jura', evidence: 'Google Timeline' },
+        { id: 380, name: 'Italy', region: 'Europe', first: 2022, places: 'Rome, Umbria, Todi and Ostuni', evidence: 'Boarding passes, rentals, stays and Google Timeline' },
+        { id: 410, name: 'South Korea', region: 'Asia', first: 2023, places: 'Seoul', evidence: 'Hotel stay, local rides and Google Timeline' },
+        { id: 620, name: 'Portugal', region: 'Europe', first: 2011, places: 'Lisbon', evidence: 'Completed Airbnb stay and boarding pass' },
+        { id: 348, name: 'Hungary', region: 'Europe', first: 2011, places: 'Budapest', evidence: 'Completed Airbnb stay and return flight' },
+        { id: 704, name: 'Vietnam', region: 'Asia', first: 2008, places: 'Family trip', evidence: 'Personal family correspondence' },
+        { id: 116, name: 'Cambodia', region: 'Asia', first: 2008, places: 'Angkor Wat', evidence: 'Personal family correspondence' },
+        { id: 710, name: 'South Africa', region: 'Africa', first: 2013, places: 'Cape Town and Somerset West', evidence: 'Boarding pass and post-trip correspondence' },
+        { id: 643, name: 'Russia', region: 'Europe', first: 2015, places: 'Moscow and Saint Petersburg', evidence: 'Confirmed Aeroflot itinerary and Google Photos' },
+        { id: 784, name: 'United Arab Emirates', region: 'Asia', first: 2015, places: 'Dubai', evidence: 'Hotel review and confirmed flights' },
+        { id: 364, name: 'Iran', region: 'Asia', first: 2015, places: 'Tehran, Isfahan, Shiraz and Persepolis', evidence: 'Confirmed Emirates flight and Google Photos' },
+        { id: 792, name: 'Turkey', region: 'Europe', first: 2015, places: 'Istanbul', evidence: 'Confirmed Turkish Airlines itinerary' },
+        { id: 504, name: 'Morocco', region: 'Africa', first: 2026, places: 'Dakhla and Madrid connection', evidence: 'Ryanair trip records and Calendar flights' },
+        { id: 36, name: 'Australia', region: 'Oceania', first: 1999, places: 'Family trip', evidence: 'Dated OneDrive photo album' },
+        { id: 40, name: 'Austria', region: 'Europe', first: 1997, places: 'Skiing trip', evidence: 'Dated OneDrive photo album' },
+        { id: 48, name: 'Bahrain', region: 'Asia', first: 1998, places: 'Family trip', evidence: 'Dated OneDrive photo album', coords: [50.56, 26.07] },
+        { id: 124, name: 'Canada', region: 'Americas', first: 2025, places: 'Toronto', evidence: 'Accepted Google Calendar flights' },
+        { id: 300, name: 'Greece', region: 'Europe', first: 2014, places: 'Mykonos', evidence: 'Dated Google Photos location album' },
+        { id: 360, name: 'Indonesia', region: 'Asia', first: 1992, places: 'Bali and Denpasar', evidence: 'Dated OneDrive album and Google Photos' },
+        { id: 392, name: 'Japan', region: 'Asia', first: 1992, places: 'Tokyo and Tokyo Disneyland', evidence: 'Dated OneDrive photo album and N-400 travel history log' },
+        { id: 446, name: 'Macau', region: 'Asia', first: 1993, places: 'Macau', evidence: 'Dated OneDrive photo albums', coords: [113.54, 22.20] },
+        { id: 458, name: 'Malaysia', region: 'Asia', first: 1991, places: 'Tioman Island and the Perhentian Islands', evidence: 'Dated family and personal photo albums' },
+        { id: 608, name: 'Philippines', region: 'Asia', first: 1999, places: 'Manila', evidence: 'Dated OneDrive photo album' },
+        { id: 702, name: 'Singapore', region: 'Asia', first: 1991, places: 'Singapore', evidence: 'Dated family photo albums', coords: [103.82, 1.35] }
+      ];
+
+      const byId = new Map(countries.map((country) => [country.id, country]));
+      const mapRoot = document.querySelector('#travel-map');
+      const listRoot = document.querySelector('#country-list');
+      const detail = document.querySelector('#country-detail');
+      const tooltip = document.querySelector('#map-tooltip');
+      const search = document.querySelector('#country-search');
+      let activeRegion = 'All';
+      let activeCountry = null;
+
+      const themeToggle = document.querySelector('.theme-toggle');
+      const updateThemeToggle = () => {
+        themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? 'day' : 'night';
+      };
+      themeToggle.addEventListener('click', (event) => {
+        event.preventDefault();
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem('theme', next);
+        updateThemeToggle();
+      });
+      updateThemeToggle();
+
+      const matches = (country) => {
+        const term = search.value.trim().toLowerCase();
+        const regionMatch = activeRegion === 'All' || country.region === activeRegion;
+        return regionMatch && (!term || `${country.name} ${country.places}`.toLowerCase().includes(term));
+      };
+
+      const showCountry = (country) => {
+        activeCountry = country;
+        detail.classList.add('is-open');
+        detail.innerHTML = `
+          <button class="country-detail-close" type="button" aria-label="Close country details">×</button>
+          <p class="country-detail-kicker">${country.region} · since ${country.first}</p>
+          <h2>${country.name}</h2>
+          <p class="country-detail-places">${country.places}</p>
+          <dl><dt>Travel record</dt><dd>${country.evidence}</dd></dl>`;
+        detail.querySelector('.country-detail-close').addEventListener('click', closeDetail);
+        document.querySelectorAll('[data-country-id]').forEach((element) => {
+          element.classList.toggle('is-selected', Number(element.dataset.countryId) === country.id);
+        });
+      };
+
+      const closeDetail = () => {
+        activeCountry = null;
+        detail.classList.remove('is-open');
+        document.querySelectorAll('[data-country-id]').forEach((element) => element.classList.remove('is-selected'));
+      };
+      detail.querySelector('.country-detail-close').addEventListener('click', closeDetail);
+
+      const renderList = () => {
+        const visible = countries.filter(matches).sort((a, b) => a.name.localeCompare(b.name));
+        listRoot.innerHTML = '';
+        visible.forEach((country) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'country-card';
+          button.dataset.countryId = country.id;
+          button.innerHTML = `<span>${country.name}</span><small>${country.first}</small>`;
+          button.addEventListener('click', () => showCountry(country));
+          listRoot.append(button);
+        });
+        document.querySelector('#visible-count').textContent = `${visible.length} shown`;
+        document.querySelector('#country-empty').hidden = visible.length > 0;
+        document.querySelectorAll('.map-country.is-visited').forEach((path) => {
+          path.classList.toggle('is-filtered', !matches(byId.get(Number(path.dataset.countryId))));
+        });
+      };
+
+      document.querySelectorAll('.travel-filter').forEach((button) => {
+        button.addEventListener('click', () => {
+          activeRegion = button.dataset.region;
+          document.querySelectorAll('.travel-filter').forEach((item) => item.classList.toggle('is-active', item === button));
+          renderList();
+        });
+      });
+      search.addEventListener('input', renderList);
+      renderList();
+
+      const drawMap = async () => {
+        try {
+          const world = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then((response) => {
+            if (!response.ok) throw new Error('Map data unavailable');
+            return response.json();
+          });
+          const features = topojson.feature(world, world.objects.countries).features.map((feature) => {
+            if (Number(feature.id) !== 250 || feature.geometry.type !== 'MultiPolygon') return feature;
+            return {
+              ...feature,
+              geometry: {
+                ...feature.geometry,
+                coordinates: feature.geometry.coordinates.filter((coordinates) => {
+                  const longitude = d3.geoCentroid({ type: 'Polygon', coordinates })[0];
+                  return longitude > -20;
+                })
+              }
+            };
+          });
+          const projection = d3.geoNaturalEarth1().fitExtent([[18, 18], [942, 482]], { type: 'FeatureCollection', features });
+          const path = d3.geoPath(projection);
+          mapRoot.innerHTML = '';
+          const svg = d3.select(mapRoot).append('svg').attr('viewBox', '0 0 960 500').attr('aria-hidden', 'true');
+          svg.append('path').attr('class', 'map-sphere').attr('d', path({ type: 'Sphere' }));
+          svg.selectAll('.map-country')
+            .data(features)
+            .join('path')
+            .attr('class', (feature) => byId.has(Number(feature.id)) ? 'map-country is-visited' : 'map-country')
+            .attr('d', path)
+            .attr('data-country-id', (feature) => Number(feature.id))
+            .attr('tabindex', (feature) => byId.has(Number(feature.id)) ? 0 : null)
+            .attr('role', (feature) => byId.has(Number(feature.id)) ? 'button' : null)
+            .attr('aria-label', (feature) => byId.has(Number(feature.id)) ? `${byId.get(Number(feature.id)).name}, visited` : null)
+            .on('click keydown', (event, feature) => {
+              if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+              const country = byId.get(Number(feature.id));
+              if (country && matches(country)) {
+                event.preventDefault();
+                showCountry(country);
+              }
+            })
+            .on('pointerenter focus', (event, feature) => {
+              const country = byId.get(Number(feature.id));
+              if (!country || !matches(country)) return;
+              tooltip.hidden = false;
+              tooltip.innerHTML = `<strong>${country.name}</strong><span>since ${country.first}</span>`;
+            })
+            .on('pointermove', (event) => {
+              const bounds = mapRoot.getBoundingClientRect();
+              tooltip.style.left = `${event.clientX - bounds.left + 12}px`;
+              tooltip.style.top = `${event.clientY - bounds.top + 12}px`;
+            })
+            .on('pointerleave blur', () => { tooltip.hidden = true; });
+
+          svg.selectAll('.map-marker')
+            .data(countries.filter((country) => country.coords))
+            .join('circle')
+            .attr('class', 'map-country map-marker is-visited')
+            .attr('cx', (country) => projection(country.coords)[0])
+            .attr('cy', (country) => projection(country.coords)[1])
+            .attr('r', 4)
+            .attr('data-country-id', (country) => country.id)
+            .attr('tabindex', 0)
+            .attr('role', 'button')
+            .attr('aria-label', (country) => `${country.name}, visited`)
+            .on('click keydown', (event, country) => {
+              if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+              if (matches(country)) {
+                event.preventDefault();
+                showCountry(country);
+              }
+            })
+            .on('pointerenter focus', (event, country) => {
+              if (!matches(country)) return;
+              tooltip.hidden = false;
+              tooltip.innerHTML = `<strong>${country.name}</strong><span>since ${country.first}</span>`;
+            })
+            .on('pointermove', (event) => {
+              const bounds = mapRoot.getBoundingClientRect();
+              tooltip.style.left = `${event.clientX - bounds.left + 12}px`;
+              tooltip.style.top = `${event.clientY - bounds.top + 12}px`;
+            })
+            .on('pointerleave blur', () => { tooltip.hidden = true; });
+          renderList();
+        } catch {
+          mapRoot.innerHTML = '<p class="travel-map-error">The map could not load, but the complete country list is still available below.</p>';
+        }
+      };
+      drawMap();
+    </script>
+  </body>
+</html>
