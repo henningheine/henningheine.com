@@ -2,8 +2,8 @@
   --background: #f7f8f7;
   --paper: rgba(255, 255, 255, 0.92);
   --ink: #2e302f;
-  --link: #356f91;
-  --muted: #777b79;
+  --link: #2e302f;
+  --muted: #2e302f;
   --glow: rgba(255, 255, 255, 0.9);
   --shadow: rgba(42, 48, 45, 0.06);
   --portrait-shadow: rgba(42, 48, 45, 0.1);
@@ -15,8 +15,8 @@ html[data-theme='dark'] {
   --background: #1b1d1c;
   --paper: rgba(36, 38, 37, 0.96);
   --ink: #e1dfd8;
-  --link: #9fc2d7;
-  --muted: #aaa9a3;
+  --link: #e1dfd8;
+  --muted: #e1dfd8;
   --glow: rgba(68, 70, 67, 0.28);
   --shadow: rgba(0, 0, 0, 0.2);
   --portrait-shadow: rgba(0, 0, 0, 0.26);
