@@ -145,6 +145,35 @@ h2 {
   font-size: 14px;
 }
 
+.press-list {
+  display: grid;
+  gap: 7px;
+}
+
+.press-item {
+  display: grid;
+  grid-template-columns: 18px 142px minmax(0, 1fr);
+  gap: 7px;
+  align-items: center;
+}
+
+.press-logo {
+  display: block;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.press-source {
+  font-weight: 700;
+}
+
+.press-detail {
+  color: var(--muted);
+  font-size: 14px;
+}
+
 ul {
   margin: 0;
   padding-left: 23px;
@@ -593,6 +622,16 @@ footer {
   }
 
   .work-detail {
+    grid-column: 2;
+  }
+
+  .press-item {
+    grid-template-columns: 18px minmax(0, 1fr);
+    column-gap: 7px;
+    row-gap: 1px;
+  }
+
+  .press-detail {
     grid-column: 2;
   }
 
