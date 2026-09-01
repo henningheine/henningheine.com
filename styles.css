@@ -578,13 +578,6 @@ a {
   text-underline-offset: 3px;
 }
 
-a:hover,
-a:focus-visible,
-.theme-toggle:hover,
-.theme-toggle:focus-visible {
-  text-decoration: underline;
-}
-
 a:focus-visible,
 .theme-toggle:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--link) 42%, transparent);
