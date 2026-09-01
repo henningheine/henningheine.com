@@ -116,6 +116,26 @@ h2 {
   font: 700 20px/1.25 Georgia, 'Times New Roman', serif;
 }
 
+.work-list {
+  display: grid;
+  gap: 7px;
+}
+
+.work-item {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  align-items: baseline;
+}
+
+.work-name {
+  font-weight: 700;
+}
+
+.work-detail {
+  color: var(--muted);
+  font-size: 14px;
+}
+
 ul {
   margin: 0;
   padding-left: 23px;
@@ -555,6 +575,11 @@ footer {
   .portrait {
     width: 172px;
     height: 172px;
+  }
+
+  .work-item {
+    grid-template-columns: 1fr;
+    gap: 1px;
   }
 
   .book-panel {
