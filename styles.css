@@ -170,11 +170,6 @@ h2 {
   object-fit: contain;
 }
 
-.press-source {
-  margin-right: 7px;
-  font-weight: 700;
-}
-
 .press-copy {
   min-width: 0;
 }
@@ -188,11 +183,6 @@ li {
   min-height: 27px;
 }
 
-.investments span {
-  margin-left: 0;
-  color: var(--muted);
-}
-
 .investments {
   display: grid;
   gap: 6px;
@@ -200,11 +190,6 @@ li {
 
 .investments li {
   min-height: 0;
-}
-
-.investments a {
-  display: inline-block;
-  width: 96px;
 }
 
 .books-page main {
