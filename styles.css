@@ -795,6 +795,10 @@ footer {
   font-size: 10px;
 }
 
+.map-tooltip.is-muted {
+  color: var(--muted);
+}
+
 .travel-content {
   display: grid;
   justify-content: end;

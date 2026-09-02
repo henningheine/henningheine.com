@@ -237,9 +237,12 @@
             })
             .on('pointerenter focus', (event, feature) => {
               const country = byId.get(Number(feature.id));
-              if (!country || !matches(country)) return;
+              if (country && !matches(country)) return;
+              const name = country?.name || feature.properties?.name;
+              if (!name) return;
               tooltip.hidden = false;
-              tooltip.innerHTML = `<strong>${country.name}</strong>`;
+              tooltip.classList.toggle('is-muted', !country);
+              tooltip.innerHTML = `<strong>${name}</strong>`;
             })
             .on('pointermove', (event) => {
               const bounds = mapRoot.getBoundingClientRect();
@@ -269,6 +272,7 @@
             .on('pointerenter focus', (event, country) => {
               if (!matches(country)) return;
               tooltip.hidden = false;
+              tooltip.classList.remove('is-muted');
               tooltip.innerHTML = `<strong>${country.name}</strong>`;
             })
             .on('pointermove', (event) => {
