@@ -18,7 +18,7 @@
     </script>
     <link rel="canonical" href="https://henningheine.com/travel.html" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css?v=20260901-travel-3" />
+    <link rel="stylesheet" href="/styles.css?v=20260901-travel-4" />
     <meta property="og:title" content="Places I’ve been — Henning Heine" />
     <meta property="og:description" content="An interactive map of countries and regions I’ve visited." />
     <meta property="og:type" content="website" />
@@ -72,15 +72,6 @@
           <div id="map-tooltip" class="map-tooltip" hidden></div>
         </section>
 
-        <div class="travel-content">
-          <aside id="country-detail" class="country-detail" aria-live="polite">
-            <button class="country-detail-close" type="button" aria-label="Close country details">×</button>
-            <p class="country-detail-kicker">Select a country</p>
-            <h2>Travel notes</h2>
-            <p>Click a highlighted country or a name in the list to see the record behind it.</p>
-          </aside>
-        </div>
-
       </main>
       <footer>Last updated September 1, 2026.</footer>
     </div>
@@ -131,11 +122,9 @@
 
       const byId = new Map(countries.map((country) => [country.id, country]));
       const mapRoot = document.querySelector('#travel-map');
-      const detail = document.querySelector('#country-detail');
       const tooltip = document.querySelector('#map-tooltip');
       const search = document.querySelector('#country-search');
       let activeRegion = 'All';
-      let activeCountry = null;
 
       const themeToggle = document.querySelector('.theme-toggle');
       const updateThemeToggle = () => {
@@ -155,28 +144,6 @@
         const regionMatch = activeRegion === 'All' || country.region === activeRegion;
         return regionMatch && (!term || `${country.name} ${country.places}`.toLowerCase().includes(term));
       };
-
-      const showCountry = (country) => {
-        activeCountry = country;
-        detail.classList.add('is-open');
-        detail.innerHTML = `
-          <button class="country-detail-close" type="button" aria-label="Close country details">×</button>
-          <p class="country-detail-kicker">${country.region}</p>
-          <h2>${country.name}</h2>
-          <p class="country-detail-places">${country.places}</p>
-          <dl><dt>Travel record</dt><dd>${country.evidence}</dd></dl>`;
-        detail.querySelector('.country-detail-close').addEventListener('click', closeDetail);
-        document.querySelectorAll('[data-country-id]').forEach((element) => {
-          element.classList.toggle('is-selected', Number(element.dataset.countryId) === country.id);
-        });
-      };
-
-      const closeDetail = () => {
-        activeCountry = null;
-        detail.classList.remove('is-open');
-        document.querySelectorAll('[data-country-id]').forEach((element) => element.classList.remove('is-selected'));
-      };
-      detail.querySelector('.country-detail-close').addEventListener('click', closeDetail);
 
       const renderList = () => {
         document.querySelectorAll('.map-country.is-visited').forEach((path) => {
@@ -224,18 +191,8 @@
             .attr('class', (feature) => byId.has(Number(feature.id)) ? 'map-country is-visited' : 'map-country')
             .attr('d', path)
             .attr('data-country-id', (feature) => Number(feature.id))
-            .attr('tabindex', (feature) => byId.has(Number(feature.id)) ? 0 : null)
-            .attr('role', (feature) => byId.has(Number(feature.id)) ? 'button' : null)
             .attr('aria-label', (feature) => byId.has(Number(feature.id)) ? `${byId.get(Number(feature.id)).name}, visited` : null)
-            .on('click keydown', (event, feature) => {
-              if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
-              const country = byId.get(Number(feature.id));
-              if (country && matches(country)) {
-                event.preventDefault();
-                showCountry(country);
-              }
-            })
-            .on('pointerenter focus', (event, feature) => {
+            .on('pointerenter', (event, feature) => {
               const country = byId.get(Number(feature.id));
               if (country && !matches(country)) return;
               const name = country?.name || feature.properties?.name;
@@ -249,7 +206,7 @@
               tooltip.style.left = `${event.clientX - bounds.left + 12}px`;
               tooltip.style.top = `${event.clientY - bounds.top + 12}px`;
             })
-            .on('pointerleave blur', () => { tooltip.hidden = true; });
+            .on('pointerleave', () => { tooltip.hidden = true; });
 
           svg.selectAll('.map-marker')
             .data(countries.filter((country) => country.coords))
@@ -259,17 +216,8 @@
             .attr('cy', (country) => projection(country.coords)[1])
             .attr('r', 4)
             .attr('data-country-id', (country) => country.id)
-            .attr('tabindex', 0)
-            .attr('role', 'button')
             .attr('aria-label', (country) => `${country.name}, visited`)
-            .on('click keydown', (event, country) => {
-              if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
-              if (matches(country)) {
-                event.preventDefault();
-                showCountry(country);
-              }
-            })
-            .on('pointerenter focus', (event, country) => {
+            .on('pointerenter', (event, country) => {
               if (!matches(country)) return;
               tooltip.hidden = false;
               tooltip.classList.remove('is-muted');
@@ -280,10 +228,10 @@
               tooltip.style.left = `${event.clientX - bounds.left + 12}px`;
               tooltip.style.top = `${event.clientY - bounds.top + 12}px`;
             })
-            .on('pointerleave blur', () => { tooltip.hidden = true; });
+            .on('pointerleave', () => { tooltip.hidden = true; });
           renderList();
         } catch {
-          mapRoot.innerHTML = '<p class="travel-map-error">The map could not load, but the complete country list is still available below.</p>';
+          mapRoot.innerHTML = '<p class="travel-map-error">The map could not load.</p>';
         }
       };
       drawMap();

@@ -650,8 +650,7 @@ footer {
   gap: 5px;
 }
 
-.travel-filter,
-.country-detail-close {
+.travel-filter {
   border: 0;
   color: var(--ink);
   background: transparent;
@@ -726,13 +725,10 @@ footer {
 
 .map-country.is-visited {
   fill: var(--map-visited);
-  cursor: pointer;
   transition: fill 140ms ease, opacity 140ms ease;
 }
 
-.map-country.is-visited:hover,
-.map-country.is-visited:focus,
-.map-country.is-visited.is-selected {
+.map-country.is-visited:hover {
   fill: var(--map-visited-hover);
   outline: none;
 }
@@ -797,99 +793,6 @@ footer {
 
 .map-tooltip.is-muted {
   color: var(--muted);
-}
-
-.travel-content {
-  display: grid;
-  justify-content: end;
-  margin-top: 18px;
-}
-
-.country-detail {
-  position: sticky;
-  top: 24px;
-  width: min(320px, 100%);
-  align-self: start;
-  min-height: 190px;
-  padding: 18px;
-  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
-  background: color-mix(in srgb, var(--paper) 92%, transparent);
-}
-
-.country-detail-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 22px;
-  line-height: 1;
-}
-
-.country-detail:not(.is-open) .country-detail-close {
-  display: none;
-}
-
-.country-detail-kicker {
-  margin: 0 28px 5px 0;
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.country-detail h2 {
-  margin: 0 28px 12px 0;
-  font-size: 20px;
-  line-height: 1.2;
-}
-
-.country-detail p {
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.country-detail-places {
-  margin-bottom: 18px !important;
-}
-
-.country-detail dl {
-  margin: 0;
-  padding-top: 12px;
-  border-top: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
-}
-
-.country-detail dt {
-  color: var(--muted);
-  font-size: 11px;
-  text-transform: uppercase;
-}
-
-.country-detail dd {
-  margin: 3px 0 0;
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-@media (max-width: 800px) {
-  .travel-content {
-    grid-template-columns: 1fr;
-  }
-
-  .country-detail {
-    position: fixed;
-    z-index: 10;
-    right: 12px;
-    bottom: 12px;
-    left: 12px;
-    top: auto;
-    display: none;
-    min-height: 0;
-    box-shadow: 0 18px 55px rgba(20, 24, 22, 0.22);
-    backdrop-filter: blur(14px);
-  }
-
-  .country-detail.is-open {
-    display: block;
-  }
 }
 
 @media (max-width: 620px) {
