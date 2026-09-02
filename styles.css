@@ -633,24 +633,7 @@ footer {
   color: var(--muted);
 }
 
-.travel-stat {
-  display: grid;
-  min-width: 90px;
-  text-align: right;
-}
-
-.travel-stat strong {
-  font-size: 28px;
-  line-height: 1;
-}
-
-.travel-stat span {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.travel-controls,
-.travel-section-heading {
+.travel-controls {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -668,7 +651,6 @@ footer {
 }
 
 .travel-filter,
-.country-card,
 .country-detail-close {
   border: 0;
   color: var(--ink);
@@ -815,66 +797,14 @@ footer {
 
 .travel-content {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 34px;
-  margin-top: 26px;
-}
-
-.travel-section-heading {
-  margin-bottom: 8px;
-  border-bottom: 1px solid color-mix(in srgb, var(--ink) 11%, transparent);
-}
-
-.travel-section-heading h2 {
-  margin: 0 0 8px;
-}
-
-.travel-section-heading span {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.country-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 22px;
-}
-
-.country-card {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0 7px;
-  border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
-  text-align: left;
-}
-
-.country-card:hover span,
-.country-card:focus-visible span,
-.country-card.is-selected span {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.country-card:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--link) 42%, transparent);
-  outline-offset: 2px;
-}
-
-.country-card small {
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.country-empty {
-  padding: 18px 0;
-  color: var(--muted);
+  justify-content: end;
+  margin-top: 18px;
 }
 
 .country-detail {
   position: sticky;
   top: 24px;
+  width: min(320px, 100%);
   align-self: start;
   min-height: 190px;
   padding: 18px;
@@ -1011,10 +941,6 @@ footer {
     align-items: flex-start;
   }
 
-  .travel-stat {
-    min-width: 64px;
-  }
-
   .travel-controls {
     align-items: stretch;
     flex-direction: column;
@@ -1026,10 +952,6 @@ footer {
 
   .travel-map {
     min-height: 210px;
-  }
-
-  .country-list {
-    grid-template-columns: 1fr;
   }
 
 }

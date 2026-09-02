@@ -47,10 +47,6 @@
             <h1 class="page-heading">Places I’ve been</h1>
             <p class="travel-intro"><span id="country-count">37</span> countries and regions, pieced together from travel records.</p>
           </div>
-          <div class="travel-stat" aria-label="Five continents visited">
-            <strong>5</strong>
-            <span>continents</span>
-          </div>
         </div>
 
         <div class="travel-controls" aria-label="Map filters">
@@ -77,15 +73,6 @@
         </section>
 
         <div class="travel-content">
-          <section aria-labelledby="country-list-heading">
-            <div class="travel-section-heading">
-              <h2 id="country-list-heading">Countries and regions</h2>
-              <span id="visible-count">37 shown</span>
-            </div>
-            <div id="country-list" class="country-list"></div>
-            <p id="country-empty" class="country-empty" hidden>No matching country found.</p>
-          </section>
-
           <aside id="country-detail" class="country-detail" aria-live="polite">
             <button class="country-detail-close" type="button" aria-label="Close country details">×</button>
             <p class="country-detail-kicker">Select a country</p>
@@ -144,7 +131,6 @@
 
       const byId = new Map(countries.map((country) => [country.id, country]));
       const mapRoot = document.querySelector('#travel-map');
-      const listRoot = document.querySelector('#country-list');
       const detail = document.querySelector('#country-detail');
       const tooltip = document.querySelector('#map-tooltip');
       const search = document.querySelector('#country-search');
@@ -175,7 +161,7 @@
         detail.classList.add('is-open');
         detail.innerHTML = `
           <button class="country-detail-close" type="button" aria-label="Close country details">×</button>
-          <p class="country-detail-kicker">${country.region} · since ${country.first}</p>
+          <p class="country-detail-kicker">${country.region}</p>
           <h2>${country.name}</h2>
           <p class="country-detail-places">${country.places}</p>
           <dl><dt>Travel record</dt><dd>${country.evidence}</dd></dl>`;
@@ -193,19 +179,6 @@
       detail.querySelector('.country-detail-close').addEventListener('click', closeDetail);
 
       const renderList = () => {
-        const visible = countries.filter(matches).sort((a, b) => a.name.localeCompare(b.name));
-        listRoot.innerHTML = '';
-        visible.forEach((country) => {
-          const button = document.createElement('button');
-          button.type = 'button';
-          button.className = 'country-card';
-          button.dataset.countryId = country.id;
-          button.innerHTML = `<span>${country.name}</span><small>${country.first}</small>`;
-          button.addEventListener('click', () => showCountry(country));
-          listRoot.append(button);
-        });
-        document.querySelector('#visible-count').textContent = `${visible.length} shown`;
-        document.querySelector('#country-empty').hidden = visible.length > 0;
         document.querySelectorAll('.map-country.is-visited').forEach((path) => {
           path.classList.toggle('is-filtered', !matches(byId.get(Number(path.dataset.countryId))));
         });
@@ -266,7 +239,7 @@
               const country = byId.get(Number(feature.id));
               if (!country || !matches(country)) return;
               tooltip.hidden = false;
-              tooltip.innerHTML = `<strong>${country.name}</strong><span>since ${country.first}</span>`;
+              tooltip.innerHTML = `<strong>${country.name}</strong>`;
             })
             .on('pointermove', (event) => {
               const bounds = mapRoot.getBoundingClientRect();
@@ -296,7 +269,7 @@
             .on('pointerenter focus', (event, country) => {
               if (!matches(country)) return;
               tooltip.hidden = false;
-              tooltip.innerHTML = `<strong>${country.name}</strong><span>since ${country.first}</span>`;
+              tooltip.innerHTML = `<strong>${country.name}</strong>`;
             })
             .on('pointermove', (event) => {
               const bounds = mapRoot.getBoundingClientRect();
